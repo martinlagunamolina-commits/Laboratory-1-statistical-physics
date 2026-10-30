@@ -9,7 +9,7 @@ ChatGPT suggested using Python's built-in `math.comb()` function to calculate ex
 ***Implementation:***  
 A `multiplicity_test(N, k)` function was added to `combinatorics.py`, using `math.comb()` exclusively for verification.
 
-***Verification***
+***Verification:***
 No test was carried out since we were given a specific python function.
 
 
@@ -31,7 +31,7 @@ def test_total_microstates():
 ***Implementation:***  
 We implemented test functions as explained for all the fucntions we had previously defined.
 
-***Verification***
+***Verification:***
 None, just implementation question.
 
 
@@ -46,4 +46,4 @@ None, just implementation question.
 ***Implementation:***
 
 
-***Verification***
+***Verification:***
