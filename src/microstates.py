@@ -23,6 +23,7 @@ def count_heads(state: int) -> int:
 
 # Counts the 1 bits in a microstate, because each 1 represents a head, by dividing by 2 and getting the reminder, we are effectively reading each bit.
 
+
 def count_macrostate_multiplicities(N: int) -> dict[int, int]:
     multiplicities = {}
 
