@@ -23,6 +23,10 @@ def count_heads(state: int) -> int:
 
 # Counts the 1 bits in a microstate, because each 1 represents a head, by dividing by 2 and getting the reminder, we are effectively reading each bit.
 
+def count_heads_fast(state: int) -> int:
+    return state.bit_count()
+#Uses a pyhton implementation to count bits directly.
+
 
 def count_macrostate_multiplicities(N: int) -> dict[int, int]:
     multiplicities = {}
@@ -40,3 +44,15 @@ def count_macrostate_multiplicities(N: int) -> dict[int, int]:
 
 # Groups all generated microstates by their number of heads and counts each group.
 
+
+def count_macrostate_multiplicities_fast(N: int) -> dict[int, int]:
+    multiplicities = {}
+
+    for k in range(N + 1):
+        multiplicities[k] = 0
+
+    for state in enumerate_microstates(N):
+        k = state.bit_count()
+        multiplicities[k] = multiplicities[k] + 1
+
+    return multiplicities
