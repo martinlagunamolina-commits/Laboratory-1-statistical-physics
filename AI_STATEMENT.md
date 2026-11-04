@@ -56,28 +56,62 @@ The corresponding tests check agreement with exact results where comparison is p
 
 Prompt 5
 
-Prompt:
-"Could you explain the difference between microstates and macrostates and why entropy increases when a macrostate has a greater multiplicity?"
+***Prompt:***  
+"Our project calculates the multiplicity of each macrostate for a system of N coins. We already have functions for calculating binomial coefficients and their logarithms in src/combinatorics.py. Help us understand how to use these functions efficiently for large values of N, avoiding numerical overflow. Also, explain how we can benchmark the calculation of the complete multiplicity distribution for different system sizes and measure execution time and memory consumption. Keep the existing function names and avoid unnecessary modifications to the current modules."
 
-AI Response:
-ChatGPT explained that a macrostate groups together many individual microstates and that, for equally likely microstates, higher multiplicity corresponds to higher macrostate probability. It also explained the relationship between multiplicity and Boltzmann entropy, and why relative fluctuations become less significant as the number of particles increases.
+***AI Response:***  
+ChatGPT explained the advantages of using logarithmic calculations for large binomial coefficients and suggested ways to benchmark the computation of complete distributions. It also helped distinguish between the function returning the multiplicity and the one returning its logarithm.
 
-Implementation:
-These explanations supported our understanding of the thermodynamic calculations and helped us interpret the probability and entropy results discussed in the laboratory report. They were used as conceptual guidance rather than as a substitute for the numerical calculations.
+***Implementation and verification:***
 
-Verification:
-The physical interpretation was checked against the binomial model and the equations used in the report. The thermodynamics tests also verify selected entropy calculations and the sign of entropy differences; these tests passed.
+The team reviewed the proposed approach and integrated the calculations into the existing project structure. The results were checked against exact combinatorial values for smaller N, and the existing unit tests were used to verify numerical consistency.
 
-Prompt 6
+**Prompt 6**
 
-Prompt:
-"Can you explain how the main Python program works and how it connects the microstates, combinatorics, and thermodynamics modules? Could you also suggest how to organize the results?"
+***Prompt:***  
+"Help us organize a simple main.py that executes all the tasks required by the laboratory practice. The main program should import and reuse the existing functions from src/, enumerate all microstates for N=7, calculate and plot multiplicity distributions for N=20, 50, 80 and 100, calculate the thermodynamic-limit quantities, and save the outputs in appropriate folders. Include Boolean settings at the beginning of the file to enable or disable optional benchmark tasks. Keep the code beginner-friendly and do not duplicate functions that already exist in the modules."
 
-AI Response:
-ChatGPT explained the role of each module and how a main program can coordinate the calculations, generate distributions, organize numerical outputs, and prepare results for the report. It provided general guidance on separating the physical calculations from file generation and performance measurements.
+***AI Response:***  
+ChatGPT suggested a main-program structure that coordinates the existing modules without moving their responsibilities into a single script. It also proposed using Boolean switches to control optional tasks and organizing generated files into results/ and report/figures/.
 
-Implementation:
-This guidance helped us review the project structure and the responsibilities of the main script and supporting modules. The final project organizes numerical results, benchmark information, and report material in separate locations.
+***Implementation and verifiacation:***
+The team adapted the proposed structure to the actual repository and checked that the imports, output paths and function calls were consistent with the existing modules. The program was executed to verify that the expected files and figures were generated.
 
-Verification:
-The output tests check representative generated files and benchmark behavior. These tests were included in the full suite of 54 passing tests.
+
+
+**Prompt 7**
+
+***Prompt:***  
+"How can we connect our Python program with our LaTeX report so that running main.py generates all the figures first and then automatically compiles report/main.tex into a PDF? The plots should be saved as PDF files inside report/figures/, and the LaTeX document should reference them using relative paths. Add an optional compilation setting at the beginning of main.py. Use latexmk if available and pdflatex as a fallback. Explain how the directory structure should be organized and how to handle a missing LaTeX installation."
+
+***AI Response:***  
+ChatGPT explained how Python can execute external compilation commands using the subprocess module. It proposed adding a compilation function at the end of the main execution sequence, after all calculations and figures had been generated. It also explained how to reference generated PDF figures in LaTeX using \includegraphics.
+
+***Implementation and verifiacation:***
+The team integrated the compilation step into the main program and checked the relative file paths. The workflow was tested locally, including the case where the LaTeX compiler was not installed or could not be found.
+
+
+
+
+**Prompt 8**
+
+***Prompt:***  
+"Help us create a LaTeX template for our Statistical Physics Laboratory 1 report. Use the laboratory guide to establish an appropriate document structure and include all the necessary sections and subsections. The template should contain a title page with the university, course, laboratory title, academic year and team member information. Include sections for the introduction, computational methodology, results, discussion and conclusions, as well as an appendix for additional technical information. Set up the necessary packages for mathematical equations, tables, figures, page formatting and hyperlinks. Keep the design professional, simple and suitable for a scientific laboratory report."
+
+***AI Response:***  
+ChatGPT proposed a complete LaTeX document structure, including the document class, package imports, title-page fields, section hierarchy and basic formatting. It also suggested packages for mathematical notation, figure insertion, table formatting and page layout.
+
+***Implementation and verifiacation:***
+The team adapted the proposed template to the laboratory requirements, completed the title-page information and adjusted the section structure. The document was compiled to verify that the template and formatting worked correctly.
+
+
+**Prompt 9**
+
+***Prompt:***  
+"Based on the First Laboratory Practice guide, help us identify all the questions and required information that must appear in the final report. Organize them into appropriate LaTeX sections and subsections, ensuring that no task is omitted. Include placeholders for numerical results, tables, figures, equations and explanations. Distinguish between computational results, theoretical discussion and conclusions. Keep the report concise and organized according to the laboratory instructions."
+
+***AI Response:***  
+ChatGPT helped map the laboratory questions to the report structure. It proposed organizing the computational analysis into the enumeration, multiplicity distribution, benchmarking and thermodynamic-limit tasks, followed by the probability, entropy and thermodynamic questions.
+
+***Implementation and verifiacation:***
+The team compared the proposed structure against the original laboratory guide and checked that every required question had a corresponding place in the report. The placeholders were subsequently replaced with the team's calculations, explanations and figures.
