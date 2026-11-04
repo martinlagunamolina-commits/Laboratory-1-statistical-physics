@@ -49,6 +49,37 @@ def multiplicity_test(N: int, k: int) -> int:
 #Calculate the exact multiplicity using the binomial coefficient. Only for verification.
 
 
+def multiplicities_by_recurrence(N: int) -> dict[int, int]:
+    multiplicities = {0: 1}
+    omega = 1
+
+    for k in range(N):
+        omega = omega * (N - k) // (k + 1)
+        multiplicities[k + 1] = omega
+
+    return multiplicities
+
+#Computes all multiplicities for 0<k<=N
+
+def log_multiplicities_by_recurrence(N: int) -> dict[int, float]:
+    log_multiplicities = {0: 0.0}
+    log_omega = 0.0
+
+    # Calculate the values up to the middle of the distribution.
+    for k in range(N // 2):
+        log_omega = log_omega + log(N - k) - log(k + 1)
+        log_multiplicities[k + 1] = log_omega
+
+    # Use the symmetry Omega(N,k) = Omega(N,N-k).
+    for k in range(N // 2 + 1, N + 1):
+        log_multiplicities[k] = log_multiplicities[N - k]
+
+    return log_multiplicities
+
+#Computes all multiplicities for 0<k<=N in log
+
+
+
 
 def macrostate_probability_count(N: int, k: int) -> float:
 

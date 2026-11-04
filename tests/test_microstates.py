@@ -2,7 +2,9 @@ from src.microstates import (
     total_microstates,
     enumerate_microstates,
     count_heads,
-    count_macrostate_multiplicities
+    count_macrostate_multiplicities,
+    count_heads_fast,
+    count_macrostate_multiplicities_fast
 )
 
 
@@ -37,3 +39,23 @@ def test_macrostate_multiplicities():
         2: 3,
         3: 1
     }
+
+
+def test_count_heads_fast():
+    for state in range(25):
+        assert count_heads_fast(state) == count_heads(state)
+
+
+def test_macrostate_multiplicities_fast():
+    for N in range(8):
+        original = count_macrostate_multiplicities(N)
+        optimized = count_macrostate_multiplicities_fast(N)
+
+        assert optimized == original
+
+
+def test_macrostate_multiplicities_fast_sum():
+    for N in range(8):
+        multiplicities = count_macrostate_multiplicities_fast(N)
+
+        assert sum(multiplicities.values()) == 2**N
