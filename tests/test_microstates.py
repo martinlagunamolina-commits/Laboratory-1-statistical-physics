@@ -1,61 +1,37 @@
-from src.microstates import (
-    total_microstates,
-    enumerate_microstates,
-    count_heads,
-    count_macrostate_multiplicities,
-    count_heads_fast,
-    count_macrostate_multiplicities_fast
-)
+"""Exhaustive small-system checks for integer encodings and macrostate counts."""
+import pytest
+from math import comb
+from src.microstates import (total_microstates, enumerate_microstates, count_heads,
+                             count_macrostate_multiplicities, state_string)
 
 
-def test_total_microstates():
-    assert total_microstates(0) == 1
-    assert total_microstates(1) == 2
-    assert total_microstates(3) == 8
-    assert total_microstates(5) == 32
+@pytest.mark.parametrize("N", range(9))
+def test_complete_unique_enumeration(N):
+    states = list(enumerate_microstates(N))
+    assert states == list(range(2**N))
+    assert len(set(states)) == total_microstates(N)
+    assert count_macrostate_multiplicities(N) == {k: comb(N,k) for k in range(N+1)}
 
 
-def test_enumerate_microstates():
-    states = list(enumerate_microstates(3))
-
-    assert len(states) == 8
-    assert states == list(range(8))
-    assert len(set(states)) == 8
-
-
-def test_count_heads():
-    assert count_heads(0) == 0
-    assert count_heads(1) == 1
-    assert count_heads(5) == 2
-    assert count_heads(7) == 3
+def test_seven_coin_listing_has_all_states():
+    strings = [state_string(s,7) for s in enumerate_microstates(7)]
+    assert len(strings) == len(set(strings)) == 128
+    for s, text in enumerate(strings):
+        assert len(text) == 7
+        assert text.count("H") == count_heads(s) == s.bit_count()
+    assert state_string(0,0) == ""
 
 
-def test_macrostate_multiplicities():
-    result = count_macrostate_multiplicities(3)
-
-    assert result == {
-        0: 1,
-        1: 3,
-        2: 3,
-        3: 1
-    }
-
-
-def test_count_heads_fast():
-    for state in range(25):
-        assert count_heads_fast(state) == count_heads(state)
+@pytest.mark.parametrize("value", [-1, 2.5, True, "7"])
+def test_invalid_inputs(value):
+    with pytest.raises(ValueError):
+        total_microstates(value)
+    with pytest.raises(ValueError):
+        list(enumerate_microstates(value))
+    with pytest.raises(ValueError):
+        count_heads(value)
 
 
-def test_macrostate_multiplicities_fast():
-    for N in range(8):
-        original = count_macrostate_multiplicities(N)
-        optimized = count_macrostate_multiplicities_fast(N)
-
-        assert optimized == original
-
-
-def test_macrostate_multiplicities_fast_sum():
-    for N in range(8):
-        multiplicities = count_macrostate_multiplicities_fast(N)
-
-        assert sum(multiplicities.values()) == 2**N
+def test_state_must_fit_width():
+    with pytest.raises(ValueError):
+        state_string(8,3)

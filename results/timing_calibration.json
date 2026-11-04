@@ -1,0 +1,49 @@
+{
+  "kind": "enumeration",
+  "python": "3.11.18 | packaged by conda-forge | (main, Oct 26 2026, 11:29:07) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "processor": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+  "cpu_count": 22,
+  "per_run_timeout_seconds": 10,
+  "rss_budget_mib": null,
+  "rows": [
+    {
+      "N": 24,
+      "seconds": 1.7458601000253111,
+      "peak_rss_mib": 17.6171875,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 24,
+      "seconds": 1.4600646998733282,
+      "peak_rss_mib": 17.73046875,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 24,
+      "seconds": 1.44553709984757,
+      "peak_rss_mib": 17.7265625,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 24,
+      "seconds": 1.3981854000594467,
+      "peak_rss_mib": 17.78125,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 24,
+      "seconds": 1.4472708001267165,
+      "peak_rss_mib": 17.82421875,
+      "retained_bytes": 0,
+      "status": "complete"
+    }
+  ],
+  "mean_seconds": 1.4993836199864745,
+  "sample_sd_seconds": 0.13977920636883293,
+  "timer_resolution_seconds": 1e-07
+}

@@ -1,9 +1,7 @@
 name: statphys_lab1
-
 channels:
   - conda-forge
   - defaults
-
 dependencies:
   - python=3.11
   - numpy>=1.24

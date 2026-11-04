@@ -1,0 +1,35 @@
+{
+  "status": "calculated",
+  "suffixes": [
+    71,
+    95,
+    11,
+    79
+  ],
+  "M_exact": "5861405/187826",
+  "M": 31.206568845633726,
+  "N": 131,
+  "rounding": "nearest",
+  "center": 65,
+  "P30": 1.2446576604621723e-10,
+  "Pmode": 0.06931553447441806,
+  "Pwithin10": 0.9198300592893423,
+  "Pwithin20tails": 0.9995694642614282,
+  "deltaS_e_J_per_K": -1.2856635456335172e-22,
+  "deltaS_f_J_per_K": -1.8892401933095967e-23,
+  "deltaS_g_J_per_K": 4.762285703844343e-22,
+  "log10_mean_wait_seconds": 27.196929663265514,
+  "log10_mean_wait_years": 19.69782569618029,
+  "likelihood_states": [
+    21,
+    41
+  ],
+  "likelihood_log_ratios": [
+    32.82808717831409,
+    9.312023154570909
+  ],
+  "centered_alternative_log_ratios": [
+    1.6737527513371333,
+    1.3683711017858968
+  ]
+}

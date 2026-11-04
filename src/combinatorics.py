@@ -1,109 +1,93 @@
-from scipy.special import gammaln
-from src.microstates import count_macrostate_multiplicities
-from math import comb, log, exp
+"""Exact recurrence, log-gamma multiplicities and stable binomial probabilities."""
+
+from math import comb, exp, log
+import numpy as np
+from scipy.special import gammaln, logsumexp
+from src.microstates import count_macrostate_multiplicities, validate_n
+
+
+def validate_macrostate(N: int, k: int) -> None:
+    """Check that k is an integer heads count in [0, N]."""
+    validate_n(N)
+    if isinstance(k, bool) or not isinstance(k, int) or not 0 <= k <= N:
+        raise ValueError("k must be an integer between 0 and N.")
+
+
+def exact_multiplicities(N: int) -> list[int]:
+    """Return all coefficients by Omega(k+1)=Omega(k)*(N-k)//(k+1)."""
+    validate_n(N)
+    values = [1]
+    for k in range(N):
+        values.append(values[-1] * (N - k) // (k + 1))
+    return values
+
 
 def multiplicity_count(N: int, k: int) -> int:
-
-    multiplicities = count_macrostate_multiplicities(N)
-
-    return multiplicities[k] 
-
-def multiplicity_gammaln(N: int, k: int) -> float:
-
-    if N < 0 or k < 0 or k > N:
-        raise ValueError("Invalid values of N and k.")
-
-    log_omega = (
-        gammaln(N + 1)
-        - gammaln(k + 1)
-        - gammaln(N - k + 1)
-    )
-
-    omega = exp(log_omega)
-
-    return omega
+    """Return multiplicity by explicit enumeration; intended only for small N."""
+    validate_macrostate(N, k)
+    return count_macrostate_multiplicities(N)[k]
 
 
 def log_multiplicity_gammaln(N: int, k: int) -> float:
+    """Return ln(Omega) with log-gamma; use only for numerically moderate N.
 
-    if N < 0 or k < 0 or k > N:
-        raise ValueError("Invalid values of N and k.")
+    At N~1e23 cancellation and integer-to-float rounding destroy accuracy;
+    the report uses asymptotic formulas instead of this function there.
+    """
+    validate_macrostate(N, k)
+    if k in (0, N):
+        return 0.0
+    return float(gammaln(N + 1) - gammaln(k + 1) - gammaln(N - k + 1))
 
-    log_omega = (
-        gammaln(N + 1)
-        - gammaln(k + 1)
-        - gammaln(N - k + 1)
-    )
 
-    return log_omega
-#We output here log_omega, instead of omega, for further probability calculations in lof space, and for entropy calculations.
-
+def multiplicity_gammaln(N: int, k: int) -> float:
+    """Exponentiate ln(Omega); may overflow, so prefer the log function."""
+    return exp(log_multiplicity_gammaln(N, k))
 
 
 def multiplicity_test(N: int, k: int) -> int:
-        
-    if N < 0 or k < 0 or k > N:
-        raise ValueError("Invalid values of N and k.")
-
+    """Independent exact library reference used for verification only."""
+    validate_macrostate(N, k)
     return comb(N, k)
-#Calculate the exact multiplicity using the binomial coefficient. Only for verification.
 
 
-def multiplicities_by_recurrence(N: int) -> dict[int, int]:
-    multiplicities = {0: 1}
-    omega = 1
-
-    for k in range(N):
-        omega = omega * (N - k) // (k + 1)
-        multiplicities[k + 1] = omega
-
-    return multiplicities
-
-#Computes all multiplicities for 0<k<=N
-
-def log_multiplicities_by_recurrence(N: int) -> dict[int, float]:
-    log_multiplicities = {0: 0.0}
-    log_omega = 0.0
-
-    # Calculate the values up to the middle of the distribution.
-    for k in range(N // 2):
-        log_omega = log_omega + log(N - k) - log(k + 1)
-        log_multiplicities[k + 1] = log_omega
-
-    # Use the symmetry Omega(N,k) = Omega(N,N-k).
-    for k in range(N // 2 + 1, N + 1):
-        log_multiplicities[k] = log_multiplicities[N - k]
-
-    return log_multiplicities
-
-#Computes all multiplicities for 0<k<=N in log
-
-
-
-
-def macrostate_probability_count(N: int, k: int) -> float:
-
-    omega = multiplicity_count(N, k)
-    total = 1 << N
-
-    return omega / total
-
+def log_probability(N: int, k: int) -> float:
+    """Return ln(P(K=k)); a logarithm can represent extremely rare events."""
+    return log_multiplicity_gammaln(N, k) - N * log(2.0)
 
 
 def macrostate_probability_gammaln(N: int, k: int) -> float:
+    """Return P(K=k); very small results can underflow to zero."""
+    return exp(log_probability(N, k))
 
-    log_omega = log_multiplicity_gammaln(N, k)
 
-    log_probability = log_omega - N * log(2)
-
-    return exp(log_probability)
-
-#We do it in log space to avoid numerical problems
+def macrostate_probability_count(N: int, k: int) -> float:
+    """Evaluate a probability through explicit small-system enumeration."""
+    return multiplicity_count(N, k) / (1 << N)
 
 
 def macrostate_probability_test(N: int, k: int) -> float:
+    """Exact-integer reference before conversion to a floating probability."""
+    return multiplicity_test(N, k) / (1 << N)
 
-    omega = multiplicity_test(N, k)
-    total = 1 << N
 
-    return omega / total
+def cumulative_probability(N: int, lower: int, upper: int) -> float:
+    """Sum the inclusive integer interval; an empty interval has probability 0."""
+    validate_macrostate(N, lower)
+    validate_macrostate(N, upper)
+    if lower > upper:
+        return 0.0
+    return float(exp(logsumexp([log_probability(N, k) for k in range(lower, upper + 1)])))
+
+
+def log_distribution(N: int) -> tuple[np.ndarray, np.ndarray]:
+    """Return all integer k and ln(Omega) as float64 arrays; O(N) memory.
+
+    Masking endpoints enforces their exact zero logarithm. Do not use for
+    macroscopic N: full-grid allocation and cancellation impose limits.
+    """
+    validate_n(N)
+    k = np.arange(N + 1, dtype=np.float64)
+    values = gammaln(N + 1) - gammaln(k + 1) - gammaln(N - k + 1)
+    values[0] = values[-1] = 0.0
+    return k, values
