@@ -4,7 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
-\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[a4paper,margin=2.25cm]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{graphicx}
 \usepackage{booktabs}
@@ -13,8 +13,9 @@
 \usepackage{hyperref}
 \usepackage{enumitem}
 \usepackage{microtype}
+\usepackage{subcaption}
+\usepackage{multicol}
 
-% Hyperlinks are kept in the PDF, with the default visible link borders.
 \hypersetup{
   colorlinks=false,
   pdftitle={Microstates and Macroscopic Thermodynamics of a Binary System},
@@ -31,187 +32,373 @@
 \fancyfoot[R]{Page \thepage}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0pt}
-
 \setlength{\parindent}{0pt}
 \setlength{\parskip}{3pt}
-\setlist[itemize]{topsep=3pt,itemsep=3pt,leftmargin=1.5em}
+\setlist[itemize]{topsep=2pt,itemsep=2pt,leftmargin=1.5em}
+\setlist[enumerate]{topsep=2pt,itemsep=2pt,leftmargin=1.7em}
 
 \begin{document}
 
-% ===================== TITLE / ABSTRACT =====================
+% ===================== TITLE PAGE =====================
 \thispagestyle{plain}
 \begin{center}
   {\LARGE\bfseries Microstates and Macroscopic Thermodynamics of a\\[2pt]
   Binary System\par}
-  \vspace{3pt}
-  {\large Statistical Physics --- Laboratory Practice 1\par}
-
+  \vspace{4pt}
+  {\large Statistical Physics -- Laboratory Practice 1\par}
   \vspace{12pt}
   {\large\bfseries Section 2 / Group E\par}
   David Izquierdo Pertica (NIA: 100XXXXXX, GitHub: @user1)\\
   Pablo Lohier Gesto (NIA: 100XXXXXX, GitHub: @user2)\\
   Martin Laguna Molina (NIA: 100XXXXXX, GitHub: @user3)\\
   David Hernández Martín (NIA: 100499171, GitHub: @David-hernandez-martin)
-
   \vspace{8pt}
-  Department of Physics, Universidad Carlos III de Madrid
 
-  \vspace{7pt}
+  Department of Physics, Universidad Carlos III de Madrid\\
   October 20, 2026
 \end{center}
 
-\vspace{6pt}
+\vspace{7pt}
 \begin{center}
   \textbf{Abstract}
 \end{center}
 \begin{quote}
-This report investigates the statistical mechanics of a system composed of independent binary elements (unbiased coins) as an exact computational and physical model for discrete two-state assemblies. We present a modular Python implementation that enumerates microstates, calculates binomial distribution frequencies using log-space arithmetic to prevent numerical overflow, and explores scaling behavior as $N\to 10^{23}$. Additionally, we derive state probabilities, compute Boltzmann entropy variations $\Delta S$, and analyze the thermodynamic limit and micro-reversibility in connection with the Second Law of Thermodynamics.
+This practice studies a system of independent, unbiased binary elements using the language of microstates, macrostates, multiplicity and Boltzmann entropy. A Python program enumerates small systems, calculates binomial multiplicities, creates macrostate-distribution plots and evaluates probabilities and entropy differences. We then use analytical approximations to examine the macroscopic limit, $N\sim10^{23}$. The results illustrate why macrostates close to equal numbers of heads and tails dominate the probability distribution and how this statistical behaviour gives rise to the Second Law of Thermodynamics.
 \end{quote}
 
-\textbf{Repository Link:} \url{https://github.com/martinlagunamolina-commits/Laboratory-1-statistical-physics}
+\textbf{Repository:} \href{https://github.com/martinlagunamolina-commits/Laboratory-1-statistical-physics}{GitHub project repository}
 
 % ===================== INTRODUCTION =====================
-\section{Introduction \& Objectives}
-The primary objective of this exercise is to model microstates and macroscopic properties of $N$ unbiased binary elements. The total number of microstates for $N$ coins is $2^N$, and the multiplicity $\Omega(N,k)$ of a macrostate with $k$ heads is given by the binomial coefficient:
+\section{Introduction}
+The system consists of $N$ independent, unbiased coins. Each coin has two possible outcomes, heads (H) or tails (T), and every complete configuration is assumed to be equally probable. A \emph{microstate} specifies the outcome of every coin, while a \emph{macrostate} is specified here by the total number of heads, $k$.
+
+There are $2^N$ possible microstates. The multiplicity of the macrostate with $k$ heads is the number of ways to choose which $k$ coins show heads:
 \begin{equation}
-  \Omega(N,k)=\binom{N}{k}=\frac{N!}{k!(N-k)!}
+  \Omega(N,k)=\binom Nk=\frac{N!}{k!(N-k)!}.
   \label{eq:multiplicity}
 \end{equation}
-We evaluate microstate multiplicity, system entropy $S=k_B\ln\Omega$, and the transition to the thermodynamic limit ($N\sim 10^{23}$).
-
-% ===================== METHODOLOGY =====================
-\section{Methodology \& Collaborative Workflow}
-\subsection{Environment \& Reproducibility}
-The computational environment was configured using Miniconda (Python 3.11). All dependencies are specified in \texttt{environment.yml} to guarantee cross-platform execution reproducibility.
-
-\subsection{Version Control \& Repository Architecture}
-Collaborative development was managed via GitHub using a feature-branch workflow. Code reviews were required before merging pull requests into the \texttt{main} branch. The repository layout follows a modular Python structure:
-\begin{itemize}
-  \item \texttt{src/}: Modular logic for microstate iteration, combinatorics, and entropy calculation.
-  \item \texttt{tests/}: Automated unit tests built with \texttt{pytest}.
-  \item \texttt{notebooks/} and \texttt{report/}: Exploratory plots and LaTeX source.
-\end{itemize}
-
-% ===================== COMPUTATIONAL ANALYSIS =====================
-\section{Computational Analysis of Microstates}
-\subsection{Enumeration for $N=7$}
-For $N=7$, the total number of microstates is $2^7=128$. Table~\ref{tab:n7} lists the multiplicity $\Omega(7,k)$ for each macrostate $k\in[0,7]$.
-
-\begin{table}[htbp]
-  \centering
-  \caption{Macrostate multiplicity $\Omega(7,k)$ and representative microstates for $N=7$.}
-  \label{tab:n7}
-  \begin{tabular}{c c l r}
-    \toprule
-    \textbf{Macrostate ($k$ heads)} & \textbf{Tails ($7-k$)} & \textbf{Sample Microstate} & $\boldsymbol{\Omega(7,k)}$ \\
-    \midrule
-    7 & 0 & HHHHHHH & 1 \\
-    6 & 1 & HHHHHHT & 7 \\
-    5 & 2 & HHHHHTT & 21 \\
-    4 & 3 & HHHHTTT & 35 \\
-    3 & 4 & HHHTTTT & 35 \\
-    2 & 5 & HHTTTTT & 21 \\
-    1 & 6 & HTTTTTT & 7 \\
-    0 & 7 & TTTTTTT & 1 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\subsection{Full Enumeration Wall ($2^N$)}
-We determined the empirical wall-clock maximum $N_{\max}$ for full microstate enumeration within a 5-minute threshold. The exponential growth $O(2^N)$ imposes strict execution time and memory barriers, detailed in Table~\ref{tab:performance}.
-
-\begin{table}[htbp]
-  \centering
-  \caption{Performance and runtime scaling for full microstate enumeration.}
-  \label{tab:performance}
-  \begin{tabular}{r c c c}
-    \toprule
-    $N$ & \textbf{Total Microstates ($2^N$)} & \textbf{Memory Usage} & \textbf{Execution Time (s)} \\
-    \midrule
-    20 & $1.05\times10^6$ & $<10$ MB & 0.08 s \\
-    25 & $3.36\times10^7$ & $\approx256$ MB & 1.45 s \\
-    30 & $1.07\times10^9$ & $\approx8$ GB & 42.10 s \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\subsection{Macrostate Frequency Distributions ($N=20,50,80,100$)}
-To compute $\Omega(N,k)$ for $N\in\{20,50,80,100\}$ without numerical overflow, calculations were executed in log-space using the log-gamma function:
+Since all microstates are equiprobable, the probability of a macrostate is
 \begin{equation}
-  \ln\Omega(N,k)=\ln\Gamma(N+1)-\ln\Gamma(k+1)-\ln\Gamma(N-k+1)
-  \label{eq:logbinomial}
+  P_k=\frac{\Omega(N,k)}{2^N}.
+  \label{eq:probability}
 \end{equation}
-Figure~\ref{fig:distributions} illustrates the normalized probability distributions $P_k=\Omega(N,k)/2^N$.
+The Boltzmann entropy associated with a macrostate is
+\begin{equation}
+  S(k)=k_B\ln\Omega(N,k),
+  \label{eq:entropy}
+\end{equation}
+where $k_B=1.380649\times10^{-23}\ {\rm J\,K^{-1}}$ is Boltzmann's constant.
+
+% ===================== COMPUTATIONAL METHOD =====================
+\section{Computational Method}
+The project is implemented in Python with separate modules for microstate enumeration, combinatorics, entropy and performance tests. The main program calls these functions, checks the calculated multiplicities, saves numerical results and generates vector PDF figures. For large binomial coefficients, logarithmic calculations are used to avoid integer-to-floating-point overflow:
+\begin{equation}
+  \ln\Omega(N,k)=\ln\Gamma(N+1)-\ln\Gamma(k+1)-\ln\Gamma(N-k+1).
+  \label{eq:log-gamma}
+\end{equation}
+For distributions over all $k$, a recurrence relation is also used:
+\begin{equation}
+  \Omega(N,0)=1,\qquad
+  \Omega(N,k+1)=\Omega(N,k)\frac{N-k}{k+1}.
+  \label{eq:recurrence}
+\end{equation}
+The recurrence avoids recalculating factorials for every macrostate. Unit tests compare the computational results with exact binomial values for small systems.
+
+% ===================== TASK 1 =====================
+\section{Computational Analysis of Microstates}
+
+\subsection{Enumeration for \texorpdfstring{$N=7$}{N=7}}
+For seven coins, the program enumerates all $2^7=128$ microstates and groups them according to the number of heads. The multiplicity distribution is:
+\begin{table}[htbp]
+  \centering
+  \caption{Macrostate multiplicities for seven coins.}
+  \label{tab:n7}
+  \begin{tabular}{c r r}
+    \toprule
+    Heads $k$ & Tails $7-k$ & $\Omega(7,k)$ \\
+    \midrule
+    0 & 7 & 1 \\
+    1 & 6 & 7 \\
+    2 & 5 & 21 \\
+    3 & 4 & 35 \\
+    4 & 3 & 35 \\
+    5 & 2 & 21 \\
+    6 & 1 & 7 \\
+    7 & 0 & 1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+The multiplicities sum to $128$, as required by the total number of microstates. The complete list of the 128 configurations is included in Appendix~\ref{app:microstates}.
+
+\subsection{Maximum \texorpdfstring{$N$}{N} for Full Enumeration}
+Full enumeration requires visiting all $2^N$ microstates, so its computational cost grows exponentially with $N$. The program benchmarks both the original enumeration method and the optimized method, applying the five-minute limit specified in the practice. It records the maximum completed $N$, execution times and peak memory use.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Five-minute full-enumeration benchmark results.}
+  \label{tab:enumeration-benchmark}
+  \small
+  \begin{tabular}{l c c c}
+    \toprule
+    Method & Maximum $N$ & Time (s) & Peak memory (MiB) \\
+    \midrule
+    Original & \textit{to be filled} & \textit{from CSV} & \textit{from CSV} \\
+    Optimized & \textit{to be filled} & \textit{from CSV} & \textit{from CSV} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+The maximum is hardware-dependent. Increasing $N$ by one doubles the number of microstates, which quickly makes exhaustive enumeration impractical in both time and memory.
+
+\subsection{Macrostate Distributions for \texorpdfstring{$N=20,50,80,100$}{N=20, 50, 80, 100}}
+For each requested system size, the program calculates $\Omega(N,k)$ for all $k=0,\ldots,N$. It verifies that $\sum_{k=0}^N\Omega(N,k)=2^N$ and saves the values in a CSV file. Figure~\ref{fig:all-distributions} compares the four multiplicity distributions on a logarithmic vertical scale. The four individual plots are shown in Figure~\ref{fig:individual-distributions}.
 
 \begin{figure}[htbp]
   \centering
-  % Add your generated plot here when available, for example:
-  % \includegraphics[width=0.82\linewidth]{figures/macrostate_distributions.pdf}
-  \caption{Macrostate distributions $P_k$ for $N=20,50,80,100$.}
-  \label{fig:distributions}
+  \includegraphics[width=0.86\linewidth]{figures/all_distributions.pdf}
+  \caption{Macrostate multiplicities $\Omega(N,k)$ for $N=20,50,80,100$. The logarithmic vertical axis allows the four distributions to be compared on the same plot.}
+  \label{fig:all-distributions}
 \end{figure}
 
-\newpage
-\subsection{Thermodynamic Limit ($N\to10^{23}$)}
-In the limit $N\to\infty$, Stirling's approximation ($\ln N!\approx N\ln N-N$) converts the binomial distribution into a Gaussian distribution centered at $\mu=N/2$ with standard deviation $\sigma=\sqrt{N}/2$. The relative fluctuation scales as:
-\begin{equation}
-  \frac{\sigma}{\mu}=\frac{\sqrt{N}/2}{N/2}=\frac{1}{\sqrt{N}}
-  \xrightarrow[N\to10^{23}]{}0
-  \label{eq:relative-fluctuation}
-\end{equation}
+\begin{figure}[p]
+  \centering
+  \begin{subfigure}[t]{0.47\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.29\textheight,keepaspectratio]{figures/distribution_N20.pdf}
+    \caption{$N=20$}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.47\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.29\textheight,keepaspectratio]{figures/distribution_N50.pdf}
+    \caption{$N=50$}
+  \end{subfigure}
+  \vspace{5pt}
+  \begin{subfigure}[t]{0.47\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.29\textheight,keepaspectratio]{figures/distribution_N80.pdf}
+    \caption{$N=80$}
+  \end{subfigure}\hfill
+  \begin{subfigure}[t]{0.47\textwidth}
+    \centering
+    \includegraphics[width=\linewidth,height=0.29\textheight,keepaspectratio]{figures/distribution_N100.pdf}
+    \caption{$N=100$}
+  \end{subfigure}
+  \caption{Individual macrostate multiplicities for the four system sizes. Each plot uses a linear vertical scale.}
+  \label{fig:individual-distributions}
+\end{figure}
 
-% ===================== PROBABILITY / ENTROPY =====================
-\section{Probabilities, Entropy, and Thermodynamics}
-\subsection{Parameter Assignment}
-The parameter $M$ is defined as the harmonic average of the last two digits of the team members' unique academic identifiers (NIAs), setting $N=100+M$.
+All distributions are symmetric about $k=N/2$, because $\Omega(N,k)=\Omega(N,N-k)$. Their maxima occur at the centre. As $N$ increases, the peak multiplicity becomes larger and the distribution becomes wider in absolute number of heads.
 
-The harmonic average of 95, 71, 79 and 11 is:
+\subsection{Practical Limit for Distribution Calculation and Plotting}
+Unlike full microstate enumeration, calculating the complete multiplicity distribution requires only $N+1$ macrostate values. The program tests the candidate system sizes
 \[
-M=\frac{4}{\frac{1}{95}+\frac{1}{71}+\frac{1}{79}+\frac{1}{11}}
+  N=100,500,1000,2000,5000,10000,20000,50000,100000,
 \]
-
-\[
-M=31.20656885
-\]
-
-Therefore:
-
-\[
-N=100+M=131.20656885
-\]
-
-Since the number of coins must be an integer, your team should use \(N=131\) if the professor confirms rounding to the nearest integer.
-
-
-\subsection{Probability and Entropy Analysis}
-Using our calculated $N$, probabilities $P_k=\Omega(N,k)/2^N$ and Boltzmann entropy changes $\Delta S=k_B\ln(\Omega_1/\Omega_2)$ are reported in Table~\ref{tab:entropy}.
+measuring the calculation and plotting times and saving them in \texttt{results/distribution\_scaling.csv}. The final tested value and its plot are recorded in \texttt{results/distribution\_scaling\_summary.txt}. Enter the largest value actually completed on the team's computer after turning on the distribution-test option in \texttt{main.py}.
 
 \begin{table}[htbp]
   \centering
-  \caption{Calculated probability and entropy variations for $N=100+M$.}
-  \label{tab:entropy}
-  \small
-  \begin{tabular}{p{0.43\linewidth} p{0.23\linewidth} p{0.27\linewidth}}
+  \caption{Practical distribution-calculation limit measured on the team's computer.}
+  \label{tab:distribution-limit}
+  \begin{tabular}{p{0.30\linewidth} c c c}
     \toprule
-    \textbf{Macrostate / Range} & \textbf{Probability ($P$)} & $\boldsymbol{\Delta S/k_B}$ \\
+    Largest tested $N$ & Calculation time (s) & Plotting time (s) & Total time (s) \\
     \midrule
-    $k=30$ heads & $\ldots$ & --- \\
-    $k=N/2$ heads (Most Probable) & $\ldots$ & $0.0000$ \\
-    Interval $[N/2-10,N/2+10]$ & $\ldots$ & --- \\
-    $k_1=N/2+25\;\to\;k_2=N/2$ & --- & \shortstack{$\ln[\Omega(N,N/2+25)$\\$\,/\,\Omega(N,N/2)]$} \\
+    \textit{Pending} & --- & --- & --- \\
     \bottomrule
   \end{tabular}
 \end{table}
+The limiting factor is the time and memory required to store and plot the $N+1$ multiplicities, rather than the exponential enumeration of all $2^N$ microstates. The reported practical limit depends on the computer and the chosen test values.
 
-\subsection{Second Law of Thermodynamics Interpretation}
-Spontaneous transitions toward states with lower $\Omega$ (higher order) are non-zero in probability for finite $N$, but their frequency becomes zero in practice as $N\to10^{23}$. This demonstrates the statistical foundation of the Second Law of Thermodynamics.
+\subsection{Extrapolation to the Thermodynamic Limit}
+For unbiased coins, the number of heads follows a binomial distribution with mean and standard deviation
+\begin{equation}
+  \langle k\rangle=\frac{N}{2},\qquad
+  \sigma_k=\frac{\sqrt{N}}{2}.
+  \label{eq:mean-std}
+\end{equation}
+Near the centre, the binomial distribution is well approximated by a Gaussian:
+\begin{equation}
+  P_k\simeq\sqrt{\frac{2}{\pi N}}
+  \exp\!\left[-\frac{2(k-N/2)^2}{N}\right].
+  \label{eq:gaussian}
+\end{equation}
+The relative fluctuation is
+\begin{equation}
+  \frac{\sigma_k}{\langle k\rangle}=\frac{1}{\sqrt{N}}
+  \longrightarrow 0 \qquad (N\to\infty).
+  \label{eq:relative-fluctuation}
+\end{equation}
+For $N=10^{23}$, the mean is $5.0\times10^{22}$ heads, the standard deviation is $1.5811\times10^{11}$ heads, and the relative fluctuation is $3.1623\times10^{-12}$. Thus, the absolute width grows as $\sqrt{N}$, but its size relative to the system becomes negligible. This is the thermodynamic-limit concentration around equal numbers of heads and tails.
+
+% ===================== SECTION 2 =====================
+\section{Probabilities, Entropy, and Thermodynamics}
+
+\subsection{Team Parameter and Rounding Convention}
+The harmonic average specified in the practice gives
+\begin{equation}
+  M=31.2066,\qquad N=100+M=131.2066.
+\end{equation}
+Since the number of coins must be an integer, we round $131.2066$ to the nearest integer and use $\boxed{N=131}$ throughout the team-specific calculations. This rounding convention is stated explicitly.
+
+For $N=131$, which is odd, the two most probable macrostates are $k=65$ and $k=66$. They have equal multiplicities. We use $k=66$ whenever a single central macrostate is needed. For the cumulative intervals, we include all integer values within the stated distance of the mean $N/2=65.5$.
+
+\subsection{Probability Calculations}
+Using Eq.~\eqref{eq:probability}, the probability results are shown in Table~\ref{tab:team-probabilities}. Parts (c) and (d) are cumulative probabilities, obtained by summing all integer macrostates inside each interval.
+\begin{table}[htbp]
+  \centering
+  \caption{Probability calculations for the team system, $N=131$.}
+  \label{tab:team-probabilities}
+  \small
+  \begin{tabular}{c p{0.52\linewidth} r}
+    \toprule
+    Part & Macrostate or interval & Probability \\
+    \midrule
+    (a) & Exactly $k=30$ heads & $1.2447\times10^{-10}$ \\
+    (b) & Central macrostate, $k=66$ (equal to $k=65$) & $6.9316\times10^{-2}$ \\
+    (c) & $56\leq k\leq75$ & $9.1983\times10^{-1}$ \\
+    (d) & $46\leq k\leq85$ & $9.9957\times10^{-1}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+\subsection{Entropy Changes and Waiting Time}
+The entropy differences are defined as $\Delta S_{k_1,k_2}=S(k_1)-S(k_2)$. For parts (e) and (f), the target values $N/2+25=90.5$ and $N/2+10=75.5$ are rounded upward to $k=91$ and $k=76$, respectively. In part (i), the central macrostate $k=66$ is compared with $k=76$; the symmetric lower-side macrostate $k=55$ has the same multiplicity as $k=76$.
+
+\begin{table}[htbp]
+  \centering
+  \caption{Entropy and thermodynamic results for the team system, $N=131$.}
+  \label{tab:team-entropy}
+  \small
+  \begin{tabular}{c p{0.57\linewidth} r}
+    \toprule
+    Part & Quantity & Result \\
+    \midrule
+    (e) & $S(91)-S(66)$ & $-1.3957\times10^{-22}\ {\rm J\,K^{-1}}$ \\
+    (f) & $S(76)-S(66)$ & $-2.3109\times10^{-23}\ {\rm J\,K^{-1}}$ \\
+    (g) & $S(66)-S(20)$ & $+4.7623\times10^{-22}\ {\rm J\,K^{-1}}$ \\
+    (h) & $P(k=8)$ & $6.3543\times10^{-28}$ \\
+    (h) & Mean waiting time, $1/P(k=8)$ & $1.5737\times10^{27}\ {\rm s}$ \\
+    (i) & $\Omega(131,66)/\Omega(131,76)$ & $5.3321$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+For part (h), a tossing rate of $N$ coins per second means that one complete configuration of all $N$ coins is generated each second. The mean number of independent trials required to obtain exactly eight heads is $1/P(k=8)$, so the expected waiting time is the same number in seconds.
+
+\subsection{Large-\texorpdfstring{$N$}{N} Limit: \texorpdfstring{$N\sim10^{23}$}{N about 10 to the 23}}
+We now reconsider parts (a)--(j) for $N=10^{23}$. Direct enumeration is impossible because there are $2^N$ microstates. We instead use analytical approximations. For this even value of $N$, the central macrostate is exactly $k=N/2$.
+
+For a fixed, small number $k$ of heads,
+\begin{equation}
+  \binom Nk=\frac{N(N-1)\cdots(N-k+1)}{k!}
+  \sim\frac{N^k}{k!},\qquad
+  P_k\sim\frac{N^k}{k!\,2^N}.
+  \label{eq:fixed-k-largeN}
+\end{equation}
+Consequently, it is more useful to report the logarithm of the probability for exactly 30 heads:
+\begin{equation}
+  \log_{10}P(k=30)\simeq-3.0103\times10^{22}.
+  \label{eq:largeN-p30}
+\end{equation}
+For the central macrostate, Stirling's approximation gives
+\begin{equation}
+  P(k=N/2)\simeq\sqrt{\frac{2}{\pi N}}
+  =2.5231\times10^{-12}.
+  \label{eq:largeN-central}
+\end{equation}
+For a fixed integer $m\ll\sqrt{N}$, the $2m+1$ probabilities in the interval $N/2-m\leq k\leq N/2+m$ are practically equal to the central probability. Thus,
+\begin{equation}
+  P\!\left(\left|k-\frac N2\right|\leq m\right)
+  \simeq(2m+1)\sqrt{\frac{2}{\pi N}}.
+  \label{eq:largeN-window}
+\end{equation}
+For an offset $m$ from the centre, the entropy difference is approximately
+\begin{equation}
+  S\!\left(\frac N2+m\right)-S\!\left(\frac N2\right)
+  \simeq-\frac{2k_Bm^2}{N}.
+  \label{eq:largeN-deltaS}
+\end{equation}
+For part (g), comparison with the macrostate containing only 20 heads gives, to leading order,
+\begin{equation}
+  S\!\left(\frac N2\right)-S(20)\simeq Nk_B\ln2.
+  \label{eq:largeN-deltaS20}
+\end{equation}
+
+\begin{table}[htbp]
+  \centering
+  \caption{Analytical results for the macroscopic system, $N=10^{23}$. Logarithms are reported for quantities outside a useful numerical range.}
+  \label{tab:largeN-results}
+  \small
+  \begin{tabular}{c p{0.49\linewidth} p{0.31\linewidth}}
+    \toprule
+    Part & Quantity & Result \\
+    \midrule
+    (a) & $\log_{10}P(k=30)$ & $-3.0103\times10^{22}$ \\
+    (b) & $P(k=N/2)$ & $2.5231\times10^{-12}$ \\
+    (c) & $P(|k-N/2|\leq10)$ & $5.2986\times10^{-11}$ \\
+    (d) & $P(|k-N/2|\leq20)$ & $1.0345\times10^{-10}$ \\
+    (e) & $S(N/2+25)-S(N/2)$ & $-1.7258\times10^{-43}\ {\rm J\,K^{-1}}$ \\
+    (f) & $S(N/2+10)-S(N/2)$ & $-2.7613\times10^{-44}\ {\rm J\,K^{-1}}$ \\
+    (g) & $S(N/2)-S(20)$ & $+9.5699\times10^{-1}\ {\rm J\,K^{-1}}$ \\
+    (h) & $\log_{10}(t_{\rm wait}/{\rm s})$ for exactly 8 heads & $3.0103\times10^{22}$ \\
+    (i) & $\Omega(N,N/2)/\Omega(N,N/2+10)$ & $1+2.0\times10^{-21}$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+For part (h), we again assume one complete $N$-coin trial per second. The expected waiting time is so large that its base-10 logarithm is the most informative representation. For part (i), the likelihood ratio approaches one because a fixed displacement of ten heads is negligible compared with the distribution width when $N$ is macroscopic. More precisely, its logarithm is approximately $2(10)^2/N$.
+
+The natural width of the distribution is
+\begin{equation}
+  \sigma_k=\frac{\sqrt N}{2}=1.5811\times10^{11}\ \text{heads},\qquad
+  \frac{\sigma_k}{N/2}=\frac{1}{\sqrt N}=3.1623\times10^{-12}.
+  \label{eq:largeN-fluctuations}
+\end{equation}
+Therefore, windows of only 10 or 20 heads are extremely narrow compared with the typical fluctuation scale. The central macrostate is the most probable individual macrostate, but its probability tends to zero as $N^{-1/2}$. Most of the total probability is spread over a number of macrostates of order $\sqrt N$.
+
+\subsection{Second Law Interpretation}
+None of the results contradicts the Second Law of Thermodynamics. In this model, the macrostate entropy is determined by the number of microstates compatible with that macrostate. A macrostate near $N/2$ has a much larger multiplicity than a strongly ordered macrostate such as $k=20$, and is therefore much more probable. For finite $N$, entropy-decreasing fluctuations are not forbidden: they have a non-zero probability. The Second Law is statistical rather than an absolute prohibition of such fluctuations. As $N$ becomes macroscopic, the probability of strongly ordered macrostates becomes extraordinarily small, while relative fluctuations vanish as $1/\sqrt N$. This explains why macroscopic systems overwhelmingly evolve toward behaviour associated with higher entropy.
 
 % ===================== CONCLUSION =====================
 \section{Conclusion}
-We computational modeled and mathematically verified the transition of discrete microstates to macrostate probability distributions. Modern software engineering practices and log-space arithmetic enabled calculations beyond standard integer overflow limits.
+The coin model shows how a simple set of independent binary elements produces a strongly peaked macrostate distribution. Exact enumeration is practical only for small $N$, whereas multiplicities can be calculated for much larger systems without listing every microstate. For $N\sim10^{23}$, the distribution is concentrated near equal numbers of heads and tails in relative terms, despite having a large absolute fluctuation width. The results give a statistical interpretation of entropy and explain why the Second Law is overwhelmingly reliable for macroscopic systems.
 
+% ===================== APPENDICES =====================
 \appendix
-\section{AI Collaboration \& Audit Statement}
-In compliance with course policy, AI tools were utilized as code assistants. All generated algorithms were audited and validated using automated tests (\texttt{pytest}). Prompt logs and verification steps are recorded in \texttt{AI\_STATEMENT.md} in the repository.
+\section{Complete Microstate List for \texorpdfstring{$N=7$}{N=7}}
+\label{app:microstates}
+The following list contains every seven-coin configuration, grouped by the number of heads. It is the complete set of $2^7=128$ microstates generated by the program.
+\small
+\setlength{\parskip}{1pt}
+\begin{multicols}{2}
+\noindent\textbf{0 heads, 7 tails (1 microstate):}\par
+\texttt{TTTTTTT}\par
+\vspace{2pt}
+\noindent\textbf{1 head, 6 tails (7 microstates):}\par
+\texttt{HTTTTTT}, \texttt{THTTTTT}, \texttt{TTHTTTT}, \texttt{TTTHTTT}, \texttt{TTTTHTT}, \texttt{TTTTTHT}, \texttt{TTTTTTH}\par
+\vspace{2pt}
+\noindent\textbf{2 heads, 5 tails (21 microstates):}\par
+\texttt{HHTTTTT}, \texttt{HTHTTTT}, \texttt{HTTHTTT}, \texttt{HTTTHTT}, \texttt{HTTTTHT}, \texttt{HTTTTTH}, \texttt{THHTTTT}, \texttt{THTHTTT}, \texttt{THTTHTT}, \texttt{THTTTHT}, \texttt{THTTTTH}, \texttt{TTHHTTT}, \texttt{TTHTHTT}, \texttt{TTHTTHT}, \texttt{TTHTTTH}, \texttt{TTTHHTT}, \texttt{TTTHTHT}, \texttt{TTTHTTH}, \texttt{TTTTHHT}, \texttt{TTTTHTH}, \texttt{TTTTTHH}\par
+\vspace{2pt}
+\noindent\textbf{3 heads, 4 tails (35 microstates):}\par
+\texttt{HHHTTTT}, \texttt{HHTHTTT}, \texttt{HHTTHTT}, \texttt{HHTTTHT}, \texttt{HHTTTTH}, \texttt{HTHHTTT}, \texttt{HTHTHTT}, \texttt{HTHTTHT}, \texttt{HTHTTTH}, \texttt{HTTHHTT}, \texttt{HTTHTHT}, \texttt{HTTHTTH}, \texttt{HTTTHHT}, \texttt{HTTTHTH}, \texttt{HTTTTHH}, \texttt{THHHTTT}, \texttt{THHTHTT}, \texttt{THHTTHT}, \texttt{THHTTTH}, \texttt{THTHHTT}, \texttt{THTHTHT}, \texttt{THTHTTH}, \texttt{THTTHHT}, \texttt{THTTHTH}, \texttt{THTTTHH}, \texttt{TTHHHTT}, \texttt{TTHHTHT}, \texttt{TTHHTTH}, \texttt{TTHTHHT}, \texttt{TTHTHTH}, \texttt{TTHTTHH}, \texttt{TTTHHHT}, \texttt{TTTHHTH}, \texttt{TTTHTHH}, \texttt{TTTTHHH}\par
+\vspace{2pt}
+\noindent\textbf{4 heads, 3 tails (35 microstates):}\par
+\texttt{HHHHTTT}, \texttt{HHHTHTT}, \texttt{HHHTTHT}, \texttt{HHHTTTH}, \texttt{HHTHHTT}, \texttt{HHTHTHT}, \texttt{HHTHTTH}, \texttt{HHTTHHT}, \texttt{HHTTHTH}, \texttt{HHTTTHH}, \texttt{HTHHHTT}, \texttt{HTHHTHT}, \texttt{HTHHTTH}, \texttt{HTHTHHT}, \texttt{HTHTHTH}, \texttt{HTHTTHH}, \texttt{HTTHHHT}, \texttt{HTTHHTH}, \texttt{HTTHTHH}, \texttt{HTTTHHH}, \texttt{THHHHTT}, \texttt{THHHTHT}, \texttt{THHHTTH}, \texttt{THHTHHT}, \texttt{THHTHTH}, \texttt{THHTTHH}, \texttt{THTHHHT}, \texttt{THTHHTH}, \texttt{THTHTHH}, \texttt{THTTHHH}, \texttt{TTHHHHT}, \texttt{TTHHHTH}, \texttt{TTHHTHH}, \texttt{TTHTHHH}, \texttt{TTTHHHH}\par
+\vspace{2pt}
+\noindent\textbf{5 heads, 2 tails (21 microstates):}\par
+\texttt{HHHHHTT}, \texttt{HHHHTHT}, \texttt{HHHHTTH}, \texttt{HHHTHHT}, \texttt{HHHTHTH}, \texttt{HHHTTHH}, \texttt{HHTHHHT}, \texttt{HHTHHTH}, \texttt{HHTHTHH}, \texttt{HHTTHHH}, \texttt{HTHHHHT}, \texttt{HTHHHTH}, \texttt{HTHHTHH}, \texttt{HTHTHHH}, \texttt{HTTHHHH}, \texttt{THHHHHT}, \texttt{THHHHTH}, \texttt{THHHTHH}, \texttt{THHTHHH}, \texttt{THTHHHH}, \texttt{TTHHHHH}\par
+\vspace{2pt}
+\noindent\textbf{6 heads, 1 tail (7 microstates):}\par
+\texttt{HHHHHHT}, \texttt{HHHHHTH}, \texttt{HHHHTHH}, \texttt{HHHTHHH}, \texttt{HHTHHHH}, \texttt{HTHHHHH}, \texttt{THHHHHH}\par
+\vspace{2pt}
+\noindent\textbf{7 heads, 0 tails (1 microstate):}\par
+\texttt{HHHHHHH}\par
+\vspace{2pt}
+\end{multicols}
+\normalsize
+
+\section{AI Collaboration and Verification Statement}
+AI tools were used as coding and writing assistants during the project. The team is responsible for reviewing, understanding and verifying every submitted calculation and explanation. The Python implementation is tested with \texttt{pytest}; the team should retain its prompt log and verification notes in \texttt{AI\_STATEMENT.md}, as required by the project instructions.
+
+\section{Reference}
+V. Tribaldos, \emph{Microstates of a System of Coins: First Laboratory Practice}, Statistical Physics, Universidad Carlos III de Madrid, Academic Year 2026--2027.
 
 \end{document}
