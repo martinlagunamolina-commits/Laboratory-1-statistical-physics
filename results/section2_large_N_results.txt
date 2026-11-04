@@ -1,0 +1,61 @@
+SECTION 2k: LARGE-N LIMIT
+N = 10^23 unbiased coins
+Analytical approximations are used; no enumeration is performed.
+
+a) Probability of exactly 30 heads
+   log10(P(k=30)) = -30102999566398119520716.3131325242283964492208675752343530335
+   P(k=30) is approximately 10 raised to this exponent.
+
+b) Probability of the central macrostate
+   P(k=N/2) approximately sqrt(2/(pi*N))
+   P(k=N/2) = 2.523132522020E-12
+
+c) Cumulative probability within +/- 10 heads
+   21 central probabilities are practically equal.
+   P(|k-N/2| <= 10) = 5.298578296242E-11
+
+d) Cumulative probability within +/- 20 heads
+   41 central probabilities are practically equal.
+   P(|k-N/2| <= 20) = 1.034484334028E-10
+
+e) Entropy difference for N/2 + 25 versus N/2
+   Delta S approximately -2*k_B*25^2/N
+   Delta S = -1.725811250000E-43 J/K
+
+f) Entropy difference for N/2 + 10 versus N/2
+   Delta S approximately -2*k_B*10^2/N
+   Delta S = -2.761298000000E-44 J/K
+
+g) Entropy difference between N/2 and 20 heads
+   Delta S = S(N/2) - S(20)
+   Delta S = 9.569929616929E-1 J/K
+
+h) Expected waiting time for exactly 8 heads
+   log10(P(k=8)) = -30102999566398119521194.4949929727401456955729732467588889257
+   log10(expected waiting time in seconds) = 30102999566398119521194.4949929727401456955729732467588889257
+   Thus the waiting time is approximately 10 raised to this exponent seconds.
+
+i) Likelihood ratio: central macrostate / macrostate N/2 + 10
+   log(ratio) approximately 2*10^2/N = 1.99999999999999999999997999999999999999999996814666666666667E-21
+   Ratio approximately 1 + 2.000000000000E-21
+
+j) Second Law interpretation
+   The Second Law is statistical, not an absolute prohibition of entropy-decreasing
+   fluctuations. A lower-entropy macrostate is possible, but it has fewer
+   compatible microstates and therefore a much smaller probability. The central
+   macrostate is overwhelmingly favoured over strongly ordered states such as
+   k=20. For N=10^23, a fluctuation from the central region to such a state is
+   extraordinarily unlikely, but it is not mathematically forbidden. Thus the
+   results do not contradict the Second Law: they explain its statistical meaning.
+
+Large-N conclusions
+   Standard deviation: sqrt(N)/2 = 1.581138830084E+11 heads.
+   Relative fluctuation: 1/sqrt(N) = 3.16227766017E-12.
+   For fixed k, P(k) approximately N^k/(k!*2^N), which tends to zero
+   exponentially as N increases. The central single-macrostate probability
+   also tends to zero, approximately as N^(-1/2).
+   A fixed window of +/-10 or +/-20 heads is negligible compared with the
+   fluctuation width, which grows as sqrt(N).
+   For a fixed offset m from N/2, Delta S is approximately -2*k_B*m^2/N
+   and tends to zero. In contrast, S(N/2)-S(20) grows approximately as
+   N*k_B*ln(2). The likelihood ratio for a fixed offset tends to 1.

@@ -1,0 +1,3 @@
+Original method: maximum N = 28
+Optimized method: maximum N = 32
+Time limit: 300 seconds for each tested N.

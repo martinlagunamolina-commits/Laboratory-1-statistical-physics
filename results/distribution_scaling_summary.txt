@@ -1,0 +1,7 @@
+TASK 1d: DISTRIBUTION CALCULATION AND PLOTTING
+
+Largest tested N completed: 100000
+The method calculates log multiplicities using a recurrence.
+The plot shows log10(Omega) against the number of heads k.
+The reported maximum is the largest tested value, not a universal limit.
+The practical limit depends on the computer and the chosen candidate values.

@@ -1,0 +1,16 @@
+SECTION 2: PROBABILITIES, ENTROPY AND THERMODYNAMICS
+Team value: N = 131
+Chosen central macrostate: k = 66
+Convention: nearest integer, half-integers rounded upward.
+
+a) P(k=30) = 1.244657660462e-10
+b) P(k=66) = 6.931553447442e-02
+c) P(56 <= k <= 75) = 9.198300592893e-01
+d) P(46 <= k <= 85) = 9.995694642614e-01
+e) Delta S = S(91) - S(66) = -1.395740956283e-22 J/K
+f) Delta S = S(76) - S(66) = -2.310865062381e-23 J/K
+g) Delta S = S(66) - S(20) = 4.762285703844e-22 J/K
+h) P(k=8) = 6.354338360419e-28
+   Expected waiting time = 1.573727968641e+27 seconds
+i) Likelihood ratio = 5.332140494829e+00
+   Compared macrostates: k=66 and k=76

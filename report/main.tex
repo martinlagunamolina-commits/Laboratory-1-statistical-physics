@@ -15,6 +15,7 @@
 \usepackage{microtype}
 \usepackage{subcaption}
 \usepackage{multicol}
+\usepackage{placeins}
 
 \hypersetup{
   colorlinks=false,
@@ -142,8 +143,8 @@ Full enumeration requires visiting all $2^N$ microstates, so its computational c
     \toprule
     Method & Maximum $N$ & Time (s) & Peak memory (MiB) \\
     \midrule
-    Original & \textit{to be filled} & \textit{from CSV} & \textit{from CSV} \\
-    Optimized & \textit{to be filled} & \textit{from CSV} & \textit{from CSV} \\
+    Original & \textit{28} & \textit{238.381} & \textit{149.055} \\
+    Optimized & \textit{32} & \textit{216.897} & \textit{149.055} \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -159,7 +160,7 @@ For each requested system size, the program calculates $\Omega(N,k)$ for all $k=
   \label{fig:all-distributions}
 \end{figure}
 
-\begin{figure}[p]
+\begin{figure}[!htbp]
   \centering
   \begin{subfigure}[t]{0.47\textwidth}
     \centering
@@ -185,6 +186,8 @@ For each requested system size, the program calculates $\Omega(N,k)$ for all $k=
   \caption{Individual macrostate multiplicities for the four system sizes. Each plot uses a linear vertical scale.}
   \label{fig:individual-distributions}
 \end{figure}
+
+\FloatBarrier
 
 All distributions are symmetric about $k=N/2$, because $\Omega(N,k)=\Omega(N,N-k)$. Their maxima occur at the centre. As $N$ increases, the peak multiplicity becomes larger and the distribution becomes wider in absolute number of heads.
 

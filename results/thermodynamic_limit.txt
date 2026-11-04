@@ -1,0 +1,6 @@
+THERMODYNAMIC LIMIT: N = 10^23
+
+Number of coins: N = 1.0e+23
+Mean number of heads: 5.000000e+22
+Standard deviation: 1.581139e+11
+Relative fluctuation: 3.162278e-12
