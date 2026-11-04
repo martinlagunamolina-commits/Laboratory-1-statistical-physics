@@ -165,6 +165,24 @@ In the limit $N\to\infty$, Stirling's approximation ($\ln N!\approx N\ln N-N$) c
 \subsection{Parameter Assignment}
 The parameter $M$ is defined as the harmonic average of the last two digits of the team members' unique academic identifiers (NIAs), setting $N=100+M$.
 
+The harmonic average of 95, 71, 79 and 11 is:
+\[
+M=\frac{4}{\frac{1}{95}+\frac{1}{71}+\frac{1}{79}+\frac{1}{11}}
+\]
+
+\[
+M=31.20656885
+\]
+
+Therefore:
+
+\[
+N=100+M=131.20656885
+\]
+
+Since the number of coins must be an integer, your team should use \(N=131\) if the professor confirms rounding to the nearest integer.
+
+
 \subsection{Probability and Entropy Analysis}
 Using our calculated $N$, probabilities $P_k=\Omega(N,k)/2^N$ and Boltzmann entropy changes $\Delta S=k_B\ln(\Omega_1/\Omega_2)$ are reported in Table~\ref{tab:entropy}.
 
