@@ -35,3 +35,5 @@ env/
 # Operating system files
 .DS_Store
 Thumbs.db
+# Transient stress-test plot
+results/distribution_stress.pdf

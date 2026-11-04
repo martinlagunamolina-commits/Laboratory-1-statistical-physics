@@ -1,0 +1,93 @@
+{
+  "kind": "enumeration",
+  "python": "3.11.18 | packaged by conda-forge | (main, Oct 26 2026, 11:29:07) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "processor": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+  "cpu_count": 22,
+  "per_run_timeout_seconds": 300.0,
+  "rss_budget_mib": null,
+  "rows": [
+    {
+      "N": 20,
+      "seconds": 0.10773469996638596,
+      "peak_rss_mib": 17.71875,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 21,
+      "seconds": 0.2414786999579519,
+      "peak_rss_mib": 17.76171875,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 22,
+      "seconds": 0.4164813000243157,
+      "peak_rss_mib": 17.8515625,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 23,
+      "seconds": 0.8055280998814851,
+      "peak_rss_mib": 17.80859375,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 24,
+      "seconds": 1.495141200022772,
+      "peak_rss_mib": 17.73828125,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 25,
+      "seconds": 2.941760699963197,
+      "peak_rss_mib": 17.81640625,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 26,
+      "seconds": 5.9526229000184685,
+      "peak_rss_mib": 17.7734375,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 27,
+      "seconds": 11.473698100075126,
+      "peak_rss_mib": 17.67578125,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 28,
+      "seconds": 22.75694109988399,
+      "peak_rss_mib": 17.80859375,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 29,
+      "seconds": 46.1237184999045,
+      "peak_rss_mib": 17.60546875,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 30,
+      "seconds": 91.92120920005254,
+      "peak_rss_mib": 17.734375,
+      "retained_bytes": 0,
+      "status": "complete"
+    },
+    {
+      "N": 31,
+      "status": "timeout",
+      "timeout_seconds": 300.0
+    }
+  ]
+}

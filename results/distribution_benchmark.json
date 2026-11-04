@@ -1,0 +1,53 @@
+{
+  "kind": "distribution",
+  "python": "3.11.18 | packaged by conda-forge | (main, Oct 26 2026, 11:29:07) [MSC v.1944 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.26200-SP0",
+  "processor": "Intel64 Family 6 Model 170 Stepping 4, GenuineIntel",
+  "cpu_count": 22,
+  "per_run_timeout_seconds": 30.0,
+  "rss_budget_mib": 256,
+  "rows": [
+    {
+      "N": 1000,
+      "seconds": 2.3460625999141484,
+      "peak_rss_mib": 90.9609375,
+      "retained_bytes": 16016,
+      "status": "complete"
+    },
+    {
+      "N": 10000,
+      "seconds": 2.090149800060317,
+      "peak_rss_mib": 91.28515625,
+      "retained_bytes": 160016,
+      "status": "complete"
+    },
+    {
+      "N": 100000,
+      "seconds": 1.969641099916771,
+      "peak_rss_mib": 95.265625,
+      "retained_bytes": 1600016,
+      "status": "complete"
+    },
+    {
+      "N": 1000000,
+      "seconds": 2.0622966999653727,
+      "peak_rss_mib": 147.78125,
+      "retained_bytes": 16000016,
+      "status": "complete"
+    },
+    {
+      "N": 2000000,
+      "seconds": 2.2247407999821007,
+      "peak_rss_mib": 218.06640625,
+      "retained_bytes": 32000016,
+      "status": "complete"
+    },
+    {
+      "N": 4000000,
+      "seconds": 2.6944184000603855,
+      "peak_rss_mib": 359.3515625,
+      "retained_bytes": 64000016,
+      "status": "over_ram_budget"
+    }
+  ]
+}

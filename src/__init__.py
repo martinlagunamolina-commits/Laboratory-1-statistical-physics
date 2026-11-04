@@ -1,0 +1,1 @@
+"""Independent unbiased-coin model for Statistical Physics Laboratory 1."""
